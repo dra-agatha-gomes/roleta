@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roleta do Emagrecimento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #3a589b, #cde8f3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 { color: #12109e; }
+    .logo {
+      width: 500px;
+      margin-bottom: 0px;
+    }
+    .roleta-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #0e146d;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      margin: 20px auto;
+    }
+    .roleta-box {
+      background: rgba(193, 220, 252, 0.85);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .seta {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-top: 40px solid rgb(172, 248, 248);
+      z-index: 10;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background: #213797;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #3f51b8; }
+    .legenda {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      width: 100%;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .legenda div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.9);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 450px;
+      width: 95%;
+      font-size: 18px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      padding: 5px;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #000;
+      background: none;
+    }
+    .modal-content h2 { margin-bottom: 15px; font-size: 22px; }
+    .modal-content p { margin: 10px 0; font-size: 18px; }
+    .modal-content input,
+    .modal-content select,
+    .modal-content #data {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+    .modal-content button.resgatar {
+      margin-top: 15px;
+      background: #28a745;
+      font-size: 18px;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .modal-content button.resgatar:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="roleta-box">
+    <img src="logo.png" alt="Logo" class="logo" />
+    <h1>Gire a roleta e ganhe!</h1>
+
+    <div class="roleta-container">
+      <div class="seta"></div>
+      <canvas id="roleta" width="300" height="300"></canvas>
+    </div>
+
+    <button id="girar">Girar Roleta</button>
+    <div class="legenda" id="legenda"></div>
+  </div>
+
+  <!-- <img src="logo.png" alt="Logo" class="logo" />
+  <h1>Gire a roleta e ganhe!</h1>
+
+  <div class="roleta-container">
+    <div class="seta"></div>
+    <canvas id="roleta" width="300" height="300"></canvas>
+  </div>
+
+  <button id="girar">Girar Roleta</button>
+
+  <div class="legenda" id="legenda"></div> -->
+
+  <!-- Modal -->
+  <div class="modal" id="modalFilial">
+    <div class="modal-content">
+      <button class="modal-close" id="fecharModal">&times;</button>
+      <h2 id="bonusTitulo">🎁 Parabéns!</h2>
+      <p id="bonusDescricao"><strong></strong></p>
+      <p><strong>Código:</strong> <span id="bonusCodigo"></span></p>
+      
+      <input type="text" id="nome" placeholder="Seu nome" required />
+      <select id="filial" required>
+        <option value="">Selecione a unidade...</option>
+        <option value="5511999999999">Florianópolis - Ingleses</option>
+        <option value="5521999999999">Florianópolis - Centro</option>
+      </select>
+      <p><strong>Você tem 7 dias para usar seu cupom:</strong> </p>
+      <input type="date" id="data" required />
+
+      <button class="resgatar" id="resgatarBtn">Resgatar pelo WhatsApp</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("roleta");
+    const ctx = canvas.getContext("2d");
+    const girarBtn = document.getElementById("girar");
+    const modal = document.getElementById("modalFilial");
+    const bonusDescricao = document.getElementById("bonusDescricao");
+    const bonusCodigo = document.getElementById("bonusCodigo");
+    const resgatarBtn = document.getElementById("resgatarBtn");
+    const dataInput = document.getElementById("data");
+    const fecharModal = document.getElementById("fecharModal");
+
+    let jaGirou = false;
+    let promocaoGanha = null;
+    let codigoGerado = null;
+    const diasMax = 7;
+
+    // lista de promoções
+    const promocoes = [
+      { emoji: "💸", nome: "10% de desconto" },
+      { emoji: "💰", nome: "20% de desconto" },
+      { emoji: "🏷️", nome: "30% de desconto" },
+      { emoji: "🎁", nome: "40% de desconto" },
+      { emoji: "🏆", nome: "50% de desconto" },
+      { emoji: "💆‍♀️", nome: "Peeling de diamante" },
+      { emoji: "💧", nome: "1 sessão de carbox" },
+      { emoji: "❓", nome: "Procedimento Surpresa" }
+    ];
+
+    const cores = ["#FF5733", "#33FF57", "#3357FF", "#FACD19", "#A569BD", "#2ECC71", "#FA7500", "#EB69F5"];
+    let startAngle = 0;
+
+    // montar legenda
+    const legendaEl = document.getElementById("legenda");
+    promocoes.forEach((p) => {
+      const item = document.createElement("div");
+      item.innerHTML = `<span style="font-size:20px">${p.emoji}</span> ${p.nome}`;
+      legendaEl.appendChild(item);
+    });
+
+    function desenharRoleta() {
+      const sliceAngle = (2 * Math.PI) / promocoes.length;
+      for (let i = 0; i < promocoes.length; i++) {
+        const angle = startAngle + i * sliceAngle;
+        ctx.beginPath();
+        ctx.fillStyle = cores[i % cores.length];
+        ctx.moveTo(canvas.width / 2, canvas.height / 2);
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, angle, angle + sliceAngle);
+        ctx.lineTo(canvas.width / 2, canvas.height / 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(angle + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 22px Arial";
+        ctx.fillText(promocoes[i].emoji, canvas.width / 2 - 20, 10);
+        ctx.restore();
+      }
+    }
+
+    function gerarCodigo(promo) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let code = "EMG-" + promo.emoji.charCodeAt(0).toString(16).toUpperCase();
+      code += "-" + Date.now().toString().slice(-6);
+      for (let i = 0; i < 4; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return code;
+    }
+
+    function configurarDataLimite() {
+      const hoje = new Date();
+      const opcoes = [];
+
+      for (let i = 0; i <= diasMax; i++) {
+        const data = new Date(hoje);
+        data.setDate(hoje.getDate() + i);
+        const diaSemana = data.getDay();
+        if (diaSemana !== 0 && diaSemana !== 6) {
+          opcoes.push(data.toISOString().split('T')[0]);
+        }
+      }
+
+      if (opcoes.length > 0) {
+        dataInput.min = opcoes[0];
+        dataInput.max = opcoes[opcoes.length - 1];
+        dataInput.value = opcoes[0];
+      }
+    }
+
+    function mostrarPromoModal() {
+      bonusDescricao.innerHTML = `🎉 Você ganhou: <strong>${promocaoGanha.emoji} ${promocaoGanha.nome}</strong>`;
+      bonusCodigo.innerText = codigoGerado;
+      configurarDataLimite();
+      modal.style.display = "flex";
+    }
+
+    function salvarJogo(promocao, codigo) {
+      const dados = {
+        promocao: promocao,
+        codigo: codigo,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('roletaPromo', JSON.stringify(dados));
+    }
+
+    function verificarSeJaJogou() {
+      const dadosSalvos = localStorage.getItem('roletaPromo');
+      if (dadosSalvos) {
+        const dados = JSON.parse(dadosSalvos);
+        jaGirou = true;
+        promocaoGanha = dados.promocao;
+        codigoGerado = dados.codigo;
+        mostrarPromoModal();
+        return true;
+      }
+      return false;
+    }
+
+    function girarRoleta() {
+      if (jaGirou) {
+        mostrarPromoModal();
+        return;
+      }
+      
+      jaGirou = true;
+      const sliceAngle = 360 / promocoes.length;
+      const anguloFinal = (360 * 5) + Math.floor(Math.random() * 360);
+
+      let anguloAtual = 0;
+      const intervalo = setInterval(() => {
+        anguloAtual += 20;
+        if (anguloAtual >= anguloFinal) {
+          clearInterval(intervalo);
+
+          const anguloReal = (anguloFinal % 360);
+          const ajuste = (anguloReal + 90) % 360;
+          const indice = Math.floor((ajuste / sliceAngle)) % promocoes.length;
+          promocaoGanha = promocoes[promocoes.length - 1 - indice];
+          codigoGerado = gerarCodigo(promocaoGanha);
+          
+          salvarJogo(promocaoGanha, codigoGerado);
+
+          setTimeout(mostrarPromoModal, 500);
+        }
+        startAngle = (anguloAtual * Math.PI) / 180;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        desenharRoleta();
+      }, 30);
+    }
+
+    // event listeners
+    girarBtn.addEventListener("click", girarRoleta);
+    fecharModal.addEventListener("click", () => modal.style.display = "none");
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+
+    resgatarBtn.onclick = () => {
+      const nome = document.getElementById("nome").value.trim();
+      const filial = document.getElementById("filial").value;
+      const data = document.getElementById("data").value;
+
+      if (!nome || !filial || !data) {
+        alert("Por favor, preencha todos os campos antes de resgatar.");
+        return;
+      }
+
+      const mensagem = encodeURIComponent(`Oi! Me chamo ${nome} e quero resgatar a promoção: ${promocaoGanha.emoji} ${promocaoGanha.nome}. Código: ${codigoGerado}. Data preferida: ${data}`);
+      const link = `https://api.whatsapp.com/send?phone=${filial}&text=${mensagem}`;
+      window.location.href = link;
+    };
+
+    // inicialização
+    window.addEventListener('load', () => {
+      verificarSeJaJogou();
+      desenharRoleta();
+    });
+  </script>
+</body>
+</html>
