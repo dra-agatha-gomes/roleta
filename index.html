@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎡</text></svg>">
   <title>Roleta do Emagrecimento</title>
   <style>
     body {
@@ -12,20 +13,28 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh; /* ajuste */
+      padding: 20px; /* evita corte da logo */
       margin: 0;
+      box-sizing: border-box;
     }
-    h1 { color: #12109e;
-        font-size: 25px;
+    h1 {
+      color: #12109e;
+      font-size: 25px;
+      text-align: center;
     }
     .logo {
-      width: 340px;
-      margin-bottom: 0px;
+      width: 90%; /* responsivo */
+      max-width: 340px;
+      height: auto;
+      margin-bottom: 10px;
     }
     .roleta-container {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 90vw;
+      height: 90vw;
+      max-width: 300px;
+      max-height: 300px;
       border-radius: 50%;
       border: 10px solid #0e146d;
       overflow: hidden;
@@ -34,10 +43,12 @@
     }
     .roleta-box {
       background: rgba(193, 220, 252, 0.85);
-      padding: 30px;
+      padding: 20px;
       border-radius: 16px;
       box-shadow: 0 0 25px rgba(0,0,0,0.4);
       text-align: center;
+      width: 100%;
+      max-width: 400px;
     }
     .seta {
       position: absolute;
@@ -70,10 +81,10 @@
     .legenda {
       margin-top: 10px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 9px;
       width: 100%;
-      max-width: 331px;
+      max-width: 350px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -146,6 +157,12 @@
     }
     .modal-content button.resgatar:hover {
       background: #218838;
+    }
+    /* Ajustes mobile */
+    @media (max-width: 480px) {
+      h1 { font-size: 20px; }
+      button { font-size: 16px; padding: 8px 16px; }
+      .modal-content { font-size: 13px; }
     }
   </style>
 </head>
