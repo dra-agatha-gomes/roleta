@@ -15,9 +15,11 @@
       height: 100vh;
       margin: 0;
     }
-    h1 { color: #12109e; }
+    h1 { color: #12109e;
+        font-size: 25px;
+    }
     .logo {
-      width: 500px;
+      width: 340px;
       margin-bottom: 0px;
     }
     .roleta-container {
@@ -55,7 +57,7 @@
       border-radius: 50%;
     }
     button {
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 10px 20px;
       font-size: 18px;
       background: #213797;
@@ -66,12 +68,12 @@
     }
     button:hover { background: #3f51b8; }
     .legenda {
-      margin-top: 20px;
+      margin-top: 10px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
+      gap: 9px;
       width: 100%;
-      max-width: 500px;
+      max-width: 331px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -97,12 +99,12 @@
     }
     .modal-content {
       background: #fff;
-      padding: 25px;
+      padding: 18px;
       border-radius: 12px;
       text-align: center;
-      max-width: 450px;
+      max-width: 300px;
       width: 95%;
-      font-size: 18px;
+      font-size: 14px;
       position: relative;
     }
     .modal-close {
@@ -121,8 +123,8 @@
       color: #000;
       background: none;
     }
-    .modal-content h2 { margin-bottom: 15px; font-size: 22px; }
-    .modal-content p { margin: 10px 0; font-size: 18px; }
+    .modal-content h2 { margin-bottom: 3px; font-size: 19px; }
+    .modal-content p { margin: 6px 0; font-size: 17px; }
     .modal-content input,
     .modal-content select,
     .modal-content #data {
@@ -131,15 +133,15 @@
         margin: 10px 0;
         border-radius: 8px;
         border: 1px solid #ccc;
-        font-size: 16px;
+        font-size: 14px;
         box-sizing: border-box;
     }
     .modal-content button.resgatar {
-      margin-top: 15px;
+      margin-top: 4px;
       background: #28a745;
-      font-size: 18px;
-      padding: 12px;
-      width: 100%;
+      font-size: 16px;
+      padding: 10px;
+      width: 70%;
       border-radius: 8px;
     }
     .modal-content button.resgatar:hover {
@@ -160,20 +162,6 @@
     <button id="girar">Girar Roleta</button>
     <div class="legenda" id="legenda"></div>
   </div>
-
-  <!-- <img src="logo.png" alt="Logo" class="logo" />
-  <h1>Gire a roleta e ganhe!</h1>
-
-  <div class="roleta-container">
-    <div class="seta"></div>
-    <canvas id="roleta" width="300" height="300"></canvas>
-  </div>
-
-  <button id="girar">Girar Roleta</button>
-
-  <div class="legenda" id="legenda"></div> -->
-
-  <!-- Modal -->
   <div class="modal" id="modalFilial">
     <div class="modal-content">
       <button class="modal-close" id="fecharModal">&times;</button>
@@ -184,8 +172,8 @@
       <input type="text" id="nome" placeholder="Seu nome" required />
       <select id="filial" required>
         <option value="">Selecione a unidade...</option>
-        <option value="5511999999999">Florianópolis - Ingleses</option>
-        <option value="5521999999999">Florianópolis - Centro</option>
+        <option value="5548991320310">Florianópolis - Centro</option>
+        <option value="554891896526">Florianópolis - Ingleses</option>
       </select>
       <p><strong>Você tem 7 dias para usar seu cupom:</strong> </p>
       <input type="date" id="data" required />
