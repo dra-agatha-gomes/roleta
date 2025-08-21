@@ -254,8 +254,10 @@
         ctx.rotate(angle + sliceAngle / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 22px Arial";
-        ctx.fillText(promocoes[i].emoji, canvas.width / 2 - 20, 10);
+        ctx.font = `${Math.floor(canvas.width / 10)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(promocoes[i].emoji, canvas.width / 2 - 40, 0);
         ctx.restore();
       }
     }
@@ -409,4 +411,3 @@
   </script>
 </body>
 </html>
-
