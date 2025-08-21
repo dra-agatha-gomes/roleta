@@ -217,17 +217,17 @@
 
     // lista de promoções
     const promocoes = [
-      { emoji: "💸", nome: "10% de desconto" },
-      { emoji: "💰", nome: "20% de desconto" },
-      { emoji: "🏷️", nome: "30% de desconto" },
-      { emoji: "🎁", nome: "40% de desconto" },
-      { emoji: "🏆", nome: "50% de desconto" },
-      { emoji: "💆‍♀️", nome: "Peeling de diamante" },
-      { emoji: "💧", nome: "1 sessão de carbox" },
-      { emoji: "❓", nome: "Procedimento Surpresa" }
+      { emoji: "💸", nome: "10% de desconto", range: [221, 260], peso: 35 },
+      { emoji: "💰", nome: "20% de desconto", range: [161, 220], peso: 25 },
+      { emoji: "🎁", nome: "30% de desconto", range: [121, 160], peso: 4 },
+      { emoji: "🏆", nome: "40% de desconto", range: [81, 120], peso: 2 },
+      { emoji: "👙", nome: "Lipo sem corte", range: [41, 80], peso: 6.5 },
+      { emoji: "💎", nome: "Peeling de diamante", range: [1, 40], peso: 5 },
+      { emoji: "💧", nome: "1 sessão de carbox", range: [301, 340], peso: 12.5 },
+      { emoji: "❓", nome: "Procedimento Surpresa", range: [261, 300], peso: 10 }
     ];
 
-    const cores = ["#FF5733", "#33FF57", "#3357FF", "#FACD19", "#A569BD", "#2ECC71", "#FA7500", "#EB69F5"];
+    const cores = ["#FACD19", "#3357FF", "#FF5733", "#A569BD", "#2ECC71", "#FA7500", "#33FF57", "#EB69F5"];
     let startAngle = 0;
 
     // montar legenda
@@ -306,8 +306,23 @@
       localStorage.setItem('roletaPromo', JSON.stringify(dados));
     }
 
+    // function testarPesos() {
+    //   const resultados = {};
+    //   const tentativas = 10000;
+
+    //   for (let i = 0; i < tentativas; i++) {
+    //     let p = sortearPromocao();
+    //     resultados[p.nome] = (resultados[p.nome] || 0) + 1;
+    //   }
+
+    //   for (let nome in resultados) {
+    //     const porcentagem = ((resultados[nome] / tentativas) * 100).toFixed(2);
+    //     console.log(`${nome}: ${resultados[nome]} vezes (${porcentagem}%)`);
+    //   }
+    // }
+
     function verificarSeJaJogou() {
-      const dadosSalvos = localStorage.getItem('roletaPromo');
+      const dadosSalvos = localStorage.getItem('roletaProsmo');
       if (dadosSalvos) {
         const dados = JSON.parse(dadosSalvos);
         jaGirou = true;
@@ -318,16 +333,34 @@
       }
       return false;
     }
+  
+    function sortearPromocao() {
+      const totalPeso = promocoes.reduce((soma, p) => soma + p.peso, 0);
+      let sorteio = Math.random() * totalPeso;
+      
+      for (let p of promocoes) {
+        if (sorteio < p.peso) return p;
+        sorteio -= p.peso;
+      }
+      return promocoes[promocoes.length - 1]; // fallback
+    }
 
     function girarRoleta() {
       if (jaGirou) {
         mostrarPromoModal();
         return;
       }
-      
+
       jaGirou = true;
-      const sliceAngle = 360 / promocoes.length;
-      const anguloFinal = (360 * 5) + Math.floor(Math.random() * 360);
+      const sorteada = sortearPromocao();
+      promocaoGanha = sorteada;
+
+      // pega um ângulo aleatório dentro do range
+      const [min, max] = sorteada.range;
+      const alvo = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      // gira várias voltas + o ângulo do alvo
+      const anguloFinal = (360 * 5) + alvo;
 
       let anguloAtual = 0;
       const intervalo = setInterval(() => {
@@ -335,12 +368,7 @@
         if (anguloAtual >= anguloFinal) {
           clearInterval(intervalo);
 
-          const anguloReal = (anguloFinal % 360);
-          const ajuste = (anguloReal + 90) % 360;
-          const indice = Math.floor((ajuste / sliceAngle)) % promocoes.length;
-          promocaoGanha = promocoes[promocoes.length - 1 - indice];
           codigoGerado = gerarCodigo(promocaoGanha);
-          
           salvarJogo(promocaoGanha, codigoGerado);
 
           setTimeout(mostrarPromoModal, 500);
@@ -350,6 +378,7 @@
         desenharRoleta();
       }, 30);
     }
+
 
     // event listeners
     girarBtn.addEventListener("click", girarRoleta);
@@ -373,6 +402,7 @@
 
     // inicialização
     window.addEventListener('load', () => {
+      // testarPesos();
       verificarSeJaJogou();
       desenharRoleta();
     });
